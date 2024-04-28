@@ -184,7 +184,7 @@ const Feed = () => {
   return (
     <section className="feed">
       <button onClick={() => toggleModal()} className="black_btn">
-        To do ekle
+        Create To Do
       </button>
       <form className="relative w-full flex-center">
         <input
