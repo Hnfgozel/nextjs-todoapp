@@ -1,3 +1,96 @@
+## <a name="tech-stack">⚙️ Tech Stack</a>
+
+- Next.js
+- MongoDB
+- NextAuth
+- TailwindCSS
+
+## <a name="features">🔋 Özellikler</a>
+
+👉 **Cammorfizm Trend Stili ile Modern Tasarım**: Şık ve çağdaş bir görünüm için cammorfizm trend stilini birleştiren modern ve görsel olarak çekici bir tasarım.
+
+👉 **Todo listesi Oluşturma**: Kullanıcıların takip etmek için kendi yapılacaklar listelerini oluşturmalarına ve bunları düzenlemelerine olanak tanır.
+
+👉 **Todoları Belirli Etikete Göre Arama**: Kullanıcıların belirli etiketlere göre Todo aramasına izin vererek belirli konularla ilgili todoları bulmayı kolaylaştırır.
+
+## <a name="quick-start">🤸 Quick Start</a>
+
+Projeyi makinenizde yerel olarak ayarlamak için aşağıdaki adımları izleyin.
+
+**Ön Gereksinimler**
+
+Makinenizde aşağıdakilerin yüklü olduğundan emin olun:
+
+- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/en)
+- [npm](https://www.npmjs.com/) (Düğüm Paketi Yöneticisi)
+
+**Cloning the Repository**
+git clone https://github.com/Hnfgozel/playable-todoapp.git
+
+cd playable-todoapp
+
+**Kurulum**
+
+Npm kullanarak proje bağımlılıklarını yükleyin:
+
+```bash
+npm install
+```
+
+**Ortam Değişkenlerini Ayarlama**
+
+Projenizin kökünde `.env` adında yeni bir dosya oluşturun ve aşağıdaki içeriği ekleyin:
+
+
+```env
+GOOGLE_ID=
+GOOGLE_CLIENT_SECRET=
+MONGODB_URI=
+
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL_INTERNAL=http://localhost:3000
+NEXTAUTH_SECRET=OTRFG2zNEXaV4hZv2ysP1Uzs+8PoN13CNCS1A+3bMk8=
+
+
+NEXT_PUBLIC_AWS_S3_ACCESS_KEY_ID=
+NEXT_PUBLIC_AWS_S3_SECRET_ACCESS_KEY=
+NEXT_PUBLIC_AWS_S3_REGION=
+NEXT_PUBLIC_AWS_S3_BUCKET_NAME=
+''''
+Yer tutucu değerlerini gerçek kimlik bilgilerinizle değiştirin. Bu kimlik bilgilerini şu adresten ilgili web sitelerine kaydolarak alabilirsiniz: [Google Cloud Console (https://console.cloud.google.com/welcome rapt=AEjHL4MBaLLneW6OfAHf_zgms1eWZFw1wdy0_KIC4uh1nEq 2m4ojOvrXNlzJ4h7CZTkpiWgcsoHbUvS FMdCP7WIkaVlPAeU7cn) VR6Y0wJHeLMOTU6KAzA&project=promp opia-385410), [Şifre Havuzu](https:/ /www.cryptool.org/en/cto/openssl) (rastgele Kimlik Doğrulama Sırrı için) ve [MongoDB (https://www.mongodb.com/).
+
+**Projeyi Çalıştırma**
+
+```bash
+npm run dev
+```
+
+sonrasında tarayıcıda  [http://localhost:3000](http://localhost:3000) adresine giderek  uygulamayı kullanmaya başlayabilirsiniz. Anlık olarak Google kullanıcısı ile girme mevcut. Giriş yap demeniz yeterli olacaktır. 
+
+Girş yaptıktan sonra kullanıcı da oluşmakta Kullanıcı ilk defa Giriş yapmışsa aynı anda kullanıcı kaydı anlamına da geliyor. 
+   async signIn({ profile }) {
+            try {
+                await connectToDB();
+
+                if (profile && profile.email) {
+                    const userExists = await User.findOne({ email: profile.email });
+
+                    if (!userExists && profile.name) {
+                        await User.create({
+                            email: profile.email,
+                            username: profile.name.replace(" ", "").toLowerCase(),
+                        });
+                    }
+                }
+
+                return true;
+            } catch (error) {
+                console.log("Error checking if user exists: ", error instanceof Error ? error.message : error);
+                return false;
+            }
+        },
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
