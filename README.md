@@ -66,7 +66,7 @@ Yer tutucu değerlerini gerçek kimlik bilgilerinizle değiştirin. Bu kimlik bi
 npm run dev
 ```
 
-sonrasında tarayıcıda  [http://localhost:3000](http://localhost:3000) adresine giderek  uygulamayı kullanmaya başlayabilirsiniz. Anlık olarak Google kullanıcısı ile girme mevcut. Giriş yap demeniz yeterli olacaktır. 
+sonrasında tarayıcıda  [http://localhost:3000](http://localhost:3000) adresine giderek  uygulamayı kullanmaya başlayabilirsiniz.
 
 Girş yaptıktan sonra kullanıcı da oluşmakta Kullanıcı ilk defa Giriş yapmışsa aynı anda kullanıcı kaydı anlamına da geliyor. 
    async signIn({ profile }) {
