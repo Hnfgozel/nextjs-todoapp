@@ -4,6 +4,7 @@
 - MongoDB
 - NextAuth
 - TailwindCSS
+- antd
 
 ## <a name="features">🔋 Özellikler</a>
 
