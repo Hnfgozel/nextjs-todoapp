@@ -1,11 +1,13 @@
 "use client";
 
 import { ChangeEvent, useState, useEffect } from "react";
-
+import { Input, Button, Typography, Modal, Space, Tag } from "antd";
 import TodoCard from "./TodoCard";
+import TodoModal from "./Form";
 import { Post } from "@/types/types";
-import Modal from "./Modal";
 import { useSession } from "next-auth/react";
+
+const { Title } = Typography;
 
 interface Props {
   data: Post[];
@@ -34,6 +36,7 @@ const TodoCardList = ({
     </div>
   );
 };
+
 const Feed = () => {
   const { data: session } = useSession();
   const [allPosts, setAllPosts] = useState<Post[]>([]);
@@ -51,9 +54,7 @@ const Feed = () => {
   const [searchText, setSearchText] = useState("");
   const [type, setType] = useState("");
 
-  const [searchTimeout, setSearchTimeout] = useState<number | NodeJS.Timeout>(
-    0
-  );
+  const [searchTimeout, setSearchTimeout] = useState<number | NodeJS.Timeout>(0);
   const [searchedResults, setSearchedResults] = useState<Post[]>([]);
 
   const fetchPosts = async () => {
@@ -83,7 +84,7 @@ const Feed = () => {
     setSearchText(e.target.value);
 
     // debounce method
-    setSearchTimeout(() =>
+    setSearchTimeout(
       setTimeout(() => {
         const searchResult = filterTodos(e.target.value);
         setSearchedResults(searchResult);
@@ -105,10 +106,9 @@ const Feed = () => {
 
       try {
         const response = await fetch(`/api/todo/${editPost._id}`);
-        console.log("response", response);
         if (response.ok) {
           const todoData = await response.json();
-          setPost(todoData); // Set the post state with the fetched todo data
+          setPost(todoData);
         } else {
           console.error("Error fetching todo data:", response.status);
         }
@@ -147,7 +147,6 @@ const Feed = () => {
           userId,
           tag: post.tag,
           imageUrl: post.imageUrl,
-          // fileUrl: post.fileUrl,
         }),
       });
 
@@ -183,31 +182,34 @@ const Feed = () => {
 
   return (
     <section className="feed">
-      <button onClick={() => toggleModal()} className="black_btn">
+      <Button onClick={() => toggleModal()} type="primary" style={{ backgroundColor: "#ff6600", borderColor: "#ff6600" }}>
         Create To Do
-      </button>
-      <form className="relative w-full flex-center">
-        <input
-          type="text"
-          placeholder="Etiket ya da açıklamaya göre arama yapabilirsiniz.  "
+      </Button>
+      <Space direction="vertical" className="w-full mt-4">
+        <Input.Search
+          placeholder="Etiket ya da açıklamaya göre arama yapabilirsiniz."
           value={searchText}
           onChange={(e) => handleSearchChange(e)}
-          required
-          className="search_input peer"
+          allowClear
+          enterButton={
+            <Button type="primary" style={{ backgroundColor: "#ff6600", borderColor: "#ff6600" }}>
+              Search
+            </Button>
+          }
+          size="large"
         />
-      </form>
+      </Space>
 
-      <Modal
-        show={showModal}
-        onClose={() => setShowModal(!showModal)}
-        post={post}
-        setPost={setPost}
-        type={type}
-        submitting={submitting}
-        handleSubmit={handleSubmit}
-      ></Modal>
+      <TodoModal
+  show={showModal}
+  onClose={() => setShowModal(!showModal)}
+  post={post}
+  type={type}
+  setPost={setPost}
+  submitting={submitting}
+  handleSubmit={handleSubmit}
+/>
 
-      {/* All Todos */}
       <TodoCardList
         data={searchText ? searchedResults : allPosts}
         handleTagClick={handleTagClick}

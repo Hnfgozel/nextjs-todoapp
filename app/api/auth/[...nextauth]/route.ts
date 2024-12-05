@@ -1,20 +1,12 @@
 import NextAuth from "next-auth/next";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { Session } from "next-auth";
 import User from "@/models/user";
 import { connectToDB } from "@/utils/database";
-
+import bcrypt from "bcrypt";
 
 const clientId = process.env.GOOGLE_ID!;
 const clientSecret = process.env.GOOGLE_CLIENT_SECRET!;
-
-interface UserSession {
-    name?: string | null | undefined;
-    email?: string | null | undefined;
-    image?: string | null | undefined;
-    id: string;
-}
 
 const handler = NextAuth({
     providers: [
@@ -22,7 +14,28 @@ const handler = NextAuth({
             clientId: clientId,
             clientSecret: clientSecret,
         }),
+        Credentials({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "text" },
+                password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+                await connectToDB();
+                
+                const user = await User.findOne({ email: credentials?.email });
+                if (!user) {
+                    throw new Error("No user found with the given email");
+                }
 
+                const isPasswordValid = await bcrypt.compare(credentials?.password, user.password);
+                if (!isPasswordValid) {
+                    throw new Error("Invalid password");
+                }
+
+                return { id: user._id, name: user.username, email: user.email };
+            },
+        }),
     ],
     callbacks: {
         async session({ session }) {
@@ -66,7 +79,11 @@ const handler = NextAuth({
                 return false;
             }
         },
-    }
+    },
+    pages: {
+        signIn: '/auth/login', // Path to your login page
+    },
+    secret: process.env.NEXTAUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };

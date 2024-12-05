@@ -1,6 +1,11 @@
+import React from "react";
+import { Button, Input, Typography, Modal } from "antd";
+import { Post } from "@/types/types";
 import { ChangeEvent } from "react";
 
-interface Props {
+const { Title, Text } = Typography;
+
+interface FormProps {
   type: string;
   post: { description: string; tag: string; imageUrl: string; fileUrl: string };
   setPost: (post: {
@@ -10,113 +15,107 @@ interface Props {
     fileUrl: string;
   }) => void;
   submitting: boolean;
-  handleSubmit: () => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
-const Form = ({ type, post, setPost, submitting, handleSubmit }: Props) => {
+
+const Form = ({ type, post, setPost, submitting, handleSubmit }: FormProps) => {
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedImage = e.target.files[0];
       const reader = new FileReader();
-
       reader.onload = (event) => {
-        const image = event.target.result;
+        const image = event.target?.result;
         setPost({ ...post, imageUrl: image as string });
       };
-
       reader.readAsDataURL(selectedImage);
     }
   };
-  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     const selectedFile = e.target.files[0];
-  //     const reader = new FileReader();
-
-  //     reader.onload = (event) => {
-  //       const fileData = event.target.result as string; // Convert to string
-  //       const fileUrl = URL.createObjectURL(selectedFile);
-  //       setPost({ ...post, fileUrl });
-  //     };
-
-  //     reader.readAsDataURL(selectedFile); // Read file as data URL
-  //   }
-  // };
 
   return (
-    <section className="w-50 max-w-75 flex-start flex-col max-h-3/4 overflow-y-auto">
-      <h1 className="head_text text-left">
-        <span className="blue_gradient">{type} Post</span>
-      </h1>
-      <p className="desc text-left max-w-md">{type} your Todos.</p>
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 overflow-y-auto glassmorphism"
+    >
+      <Input.TextArea
+        value={post.description}
+        onChange={(e) => setPost({ ...post, description: e.target.value })}
+        placeholder="Write your post here"
+        required
+        rows={4}
+      />
 
-      <form
-        onSubmit={handleSubmit}
-        className="mt-10 w-full max-w-2xl flex flex-col gap-7 overflow-y-auto glassmorphism"
-      >
-        <label>
-          <span className="font-satoshi font-semibold text-base text-gray-700">
-            Your To Do
-          </span>
+      <Input
+        value={post.tag}
+        onChange={(e) => setPost({ ...post, tag: e.target.value })}
+        type="text"
+        placeholder="#Tag area (product, webdevelopment, idea, etc.) "
+        required
+      />
+      <Input
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+      />
+       {post.imageUrl && (
+        <img
+          src={post.imageUrl}
+          alt="Selected Image"
+          className="preview-image"
+          style={{ maxWidth: "100%", height: "300px", objectFit: "contain", marginTop: "10px" }}
+        />
+      )}
 
-          <textarea
-            value={post.description}
-            onChange={(e) => setPost({ ...post, description: e.target.value })}
-            placeholder="Write your post here"
-            required
-            className="form_textarea "
-          />
-        </label>
-
-        <label>
-          <span className="font-satoshi font-semibold text-base text-gray-700">
-            Field of Todo{" "}
-            <span className="font-normal">
-              (#product, #webdevelopment, #idea, etc.)
-            </span>
-          </span>
-          <input
-            value={post.tag}
-            onChange={(e) => setPost({ ...post, tag: e.target.value })}
-            type="text"
-            placeholder="#Tag"
-            required
-            className="form_input"
-          />
-        </label>
-        <label>
-          Image:
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-          {post.imageUrl && (
-            <img
-              src={post.imageUrl}
-              alt="Selected Image"
-              className="preview-image "
-              style={{ maxWidth: "100%", height: "auto" }}
-            />
-          )}
-        </label>
-
-        {/* <label>
-          File:
-          <input
-            type="file"
-            accept=".pdf, .doc, .docx"
-            onChange={handleFileChange}
-          />
-          {post.fileUrl && <span className="file-preview">{post.fileUrl}</span>}
-        </label> */}
-
-        <div className="flex-end mx-3 mb-5 gap-4">
-          <button
-            type="submit"
-            disabled={submitting}
-            className="px-5 py-1.5 text-sm bg-primary-orange rounded-full text-white"
-          >
-            {submitting ? `${type}ing...` : type}
-          </button>
-        </div>
-      </form>
-    </section>
+      <div className="flex-end mx-3 mb-5 gap-4">
+        <Button
+          htmlType="submit"
+          type="primary"
+          loading={submitting}
+          style={{ backgroundColor: "#ff6600", borderColor: "#ff6600" }}
+        >
+          {submitting ? `${type}ing...` : type}
+        </Button>
+      </div>
+    </form>
   );
 };
 
-export default Form;
+interface ModalProps {
+  show: boolean;
+  onClose: () => void;
+  post: Post;
+  type: string;
+  setPost: (post: Post) => void;
+  submitting: boolean;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}
+
+const TodoModal = ({
+  show,
+  onClose,
+  post,
+  type,
+  setPost,
+  submitting,
+  handleSubmit,
+}: ModalProps) => {
+  return (
+    <Modal
+      open={show}
+      onCancel={onClose}
+      footer={null}
+      title={type === "Edit" ? "Edit Todo" : "Create Todo"}
+      width={800}
+      styles ={{ padding: "24px 40px", maxHeight: "80vh", overflowY: "auto" }}
+    >
+      <Form
+        type={type}
+        post={post}
+        setPost={setPost}
+        submitting={submitting}
+        handleSubmit={handleSubmit}
+      />
+    </Modal>
+  );
+};
+
+export default TodoModal;
